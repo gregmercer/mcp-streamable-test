@@ -98,7 +98,21 @@ To use this MCP server with Claude Desktop, add the following configuration to y
 
 ## Deployment
 
-This project is configured for easy deployment to platforms like Render, Heroku, or any other platform that supports Python web applications. The server automatically uses the `PORT` environment variable when available.
+### Deploy to Render.com
+
+The `fastapi_example/server.py` can be easily deployed to Render.com using a free account:
+
+**[Deploy to Render](https://render.com)**
+
+1. Create a Render account at [render.com](https://render.com)
+2. Connect your GitHub repository
+3. Create a new Web Service with these settings:
+   - **Build Command**: `uv sync`
+   - **Start Command**: `uv run fastapi_example/server.py`
+   - **Environment**: Python 3
+   - **Plan**: Free (sufficient for testing)
+
+This project is also configured for easy deployment to other platforms like Heroku or any platform that supports Python web applications. The server automatically uses the `PORT` environment variable when available.
 
 ## Development
 
