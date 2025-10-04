@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "todos-remote": {
+        "command": "uvx",
+        "args": [
+          "mcp-proxy",
+          "--transport",
+          "streamablehttp",
+          "https://mcp-streamable-test.onrender.com/echo/mcp"
+        ]
+    }
+  }
+}
