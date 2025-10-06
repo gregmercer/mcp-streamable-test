@@ -64,7 +64,7 @@ To use this MCP server with Claude Desktop, add the following configuration to y
           "mcp-proxy",
           "--transport",
           "streamablehttp",
-          "https://mcp-streamable-test.onrender.com/echo/mcp"
+          "https://your-server-name-here.onrender.com/echo/mcp"
         ]
     }
   }
