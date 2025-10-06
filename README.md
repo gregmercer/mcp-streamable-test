@@ -27,14 +27,16 @@ You’ll learn how to:
 │   ├── math_server.py          # A server exposing a math tool
 │   ├── todos_server.py         # A server exposing todo management tools
 │   └── server.py               # FastAPI app that mounts all three servers
+├── langchain-client.js         # LangChain JavaScript client using AI agents
+├── langchain-client.py         # LangChain Python client using AI agents
 ├── mcp-client.js               # Node.js client for testing FastMCP servers
-├── package.json                # Node.js dependencies for the client
+├── package.json                # Node.js dependencies for the clients
+├── .env                        # Environment variables (API keys, server URLs)
 ├── .gitignore
 ├── .python-version             # Python version (for tools like pyenv or uv)
 ├── pyproject.toml              # Project config and dependencies
 ├── readme.md                   # You're here!
 ├── runtime.txt                 # Python runtime for platforms like Render
-├── server.py                   # Basic standalone MCP server using Tavily search
 ├── uv.lock                     # Lockfile for uv dependency manager
 ```
 
@@ -172,6 +174,9 @@ This repository also includes a Python client (`langchain-client.py`) that demon
 # OpenAI API Configuration
 OPENAI_API_KEY=your_openai_api_key_here
 
+# Anthropic API Configuration
+ANTHROPIC_API_KEY=your_anthropic_api_key_here
+
 # MCP Server URLs
 MCP_ECHO_URL=https://your-server-name-here.onrender.com/echo/mcp
 MCP_MATH_URL=https://your-server-name-here.onrender.com/math/mcp
@@ -232,6 +237,109 @@ This demonstrates how MCP servers can be seamlessly integrated into LangChain wo
 
 ⸻
 
+## 🟡 LangChain JavaScript Client
+
+This repository also includes a JavaScript/Node.js client (`langchain-client.js`) that demonstrates how to use MCP servers with LangChain and LangGraph agents in JavaScript. This client connects to multiple MCP servers simultaneously and uses an AI agent to interact with the tools.
+
+### Features
+
+- **LangChain Integration**: Uses `@langchain/mcp-adapters` for seamless MCP integration
+- **Multi-Server Support**: Connects to echo, math, and todos servers simultaneously  
+- **AI Agent**: Uses LangGraph's `createReactAgent` with Claude or GPT models to intelligently use tools
+- **Environment Configuration**: Server URLs configured via `.env` file
+- **Comprehensive Testing**: Automated tests for all server types using natural language
+
+### Setup
+
+1. **Install Node.js dependencies**:
+```bash
+npm install
+```
+
+2. **Configure environment variables** in `.env`:
+```bash
+# OpenAI API Configuration (if using OpenAI)
+OPENAI_API_KEY=your_openai_api_key_here
+
+# Anthropic API Configuration (if using Claude)
+ANTHROPIC_API_KEY=your_anthropic_api_key_here
+
+# MCP Server URLs
+MCP_ECHO_URL=https://your-server-name-here.onrender.com/echo/mcp
+MCP_MATH_URL=https://your-server-name-here.onrender.com/math/mcp
+MCP_TODOS_URL=https://your-server-name-here.onrender.com/todos/mcp
+```
+
+3. **Run the LangChain JavaScript client**:
+```bash
+node langchain-client.js
+```
+
+### ⚠️ Important Note: OpenAI Model Compatibility
+
+**Currently, there is a known issue with OpenAI models** in the JavaScript LangChain client. The MCP adapter tools contain schema references (`$ref`) that cause parsing errors with the OpenAI tool binding:
+
+```
+Error: Cannot read properties of undefined (reading 'typeName')
+```
+
+**Workaround**: The client is currently configured to use **Claude (Anthropic)** instead of OpenAI, which works correctly with the MCP tool schemas.
+
+If you want to use OpenAI models, you'll need to either:
+- Wait for a fix in the LangChain OpenAI integration
+- Use the Python version (`langchain-client.py`) which works with OpenAI models
+- Manually fix the tool schemas (complex schema flattening required)
+
+### What the JavaScript Client Does
+
+The LangChain JavaScript client demonstrates advanced MCP usage by:
+
+1. **Connecting to Multiple Servers**: Simultaneously connects to echo, math, and todos MCP servers
+2. **Tool Discovery**: Automatically discovers and lists all available tools from connected servers
+3. **AI-Powered Tool Usage**: Uses natural language instructions to have the AI agent call appropriate tools
+4. **Comprehensive Testing**: Runs through test scenarios for each server type
+
+### Example Usage Patterns
+
+The client shows how an AI agent can:
+
+- **Echo Server**: `"Use the echo tool to echo this message: Hello World!"`
+- **Math Server**: `"Use the add_two tool to add 2 to the number 42"`
+- **Todos Server**: `"Use the create_todo tool to create a todo with id 1 and item 'Buy groceries'"`
+
+### Example Output
+
+```bash
+🔗 Connecting to MCP servers:
+  Echo: https://your-server-name-here.onrender.com/echo/mcp
+  Math: https://your-server-name-here.onrender.com/math/mcp
+  Todos: https://your-server-name-here.onrender.com/todos/mcp
+
+📋 Found 4 tool(s): [echo, add_two, get_todos, create_todo]
+
+🤖 Creating agent...
+
+🔊 Testing Echo Server...
+  echo('Hello from JavaScript LangChain MCP client!') = I'll echo that message for you: "Hello from JavaScript LangChain MCP client!"
+
+🧮 Testing Math Server...
+  add_two(5) = I'll add 2 to 5 for you. The result is 7.
+
+📝 Testing Todos Server...
+Getting current todos...
+  Current todos: I'll check the current todos for you. The current todo list is empty: []
+Creating sample todos...
+  Created: Buy groceries - I've successfully created a todo with ID 1 and the item "Buy groceries".
+Getting final todos list...
+  Final todos list: Here's the complete final list of todos: [{"id": 1, "item": "Buy groceries"}, {"id": 2, "item": "Walk the dog"}, {"id": 3, "item": "Finish MCP client"}]
+
+✅ All tests completed!
+```
+
+This demonstrates how MCP servers can be seamlessly integrated into LangChain JavaScript workflows, enabling AI agents to use your custom tools and functions.
+
+⸻
+
 🧪 Debug with MCP Inspector
 
 You can use the official MCP Inspector to interactively test and debug your servers:
@@ -256,21 +364,6 @@ The inspector provides a web-based interface to explore available tools, test fu
 
 
 ⸻
-
-🔌 Connect to Cursor
-
-In Cursor, add your MCP server under Chat Settings > MCP Servers:
-
-**For the basic Tavily server**:
-```json
-{
-  "mcpServers": {
-    "tavily": {
-      "url": "http://localhost:8000/mcp/"
-    }
-  }
-}
-```
 
 **For the FastAPI example servers**:
 ```json
